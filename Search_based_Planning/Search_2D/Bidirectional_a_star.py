@@ -11,16 +11,13 @@ import heapq
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
                 "/../../Search_based_Planning/")
 
-from Search_2D import plotting, env
+from Search_2D import plotting
 
 
 class BidirectionalAStar:
-    def __init__(self, s_start, s_goal, heuristic_type):
-        self.s_start = s_start
-        self.s_goal = s_goal
-        self.heuristic_type = heuristic_type
-
-        self.Env = env.Env()  # class Env
+    def __init__(self, Env):
+        
+        self.Env = Env  # class Env
 
         self.u_set = self.Env.motions  # feasible input set
         self.obs = self.Env.obs  # position of obstacles
@@ -50,12 +47,15 @@ class BidirectionalAStar:
         heapq.heappush(self.OPEN_back,
                        (self.f_value_back(self.s_goal), self.s_goal))
 
-    def searching(self):
+    def searching(self, s_start, s_goal, heuristic_type):
         """
         Bidirectional A*
         :return: connected path, visited order of forward, visited order of backward
         """
-
+        
+        self.s_start = s_start
+        self.s_goal = s_goal
+        self.heuristic_type = heuristic_type
         self.init()
         s_meet = self.s_start
 
@@ -218,10 +218,10 @@ def main():
     x_start = (5, 5)
     x_goal = (45, 25)
 
-    bastar = BidirectionalAStar(x_start, x_goal, "euclidean")
+    bastar = BidirectionalAStar(env)
     plot = plotting.Plotting(x_start, x_goal)
 
-    path, visited_fore, visited_back = bastar.searching()
+    path, visited_fore, visited_back = bastar.searching(x_start, x_goal, "euclidean")
     plot.animation_bi_astar(path, visited_fore, visited_back, "Bidirectional-A*")  # animation
 
 

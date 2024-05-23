@@ -5,11 +5,13 @@ Env 2D
 
 
 class Env:
-    def __init__(self):
-        self.x_range = 51  # size of background
-        self.y_range = 31
-        self.motions = [(-1, 0), (-1, 1), (0, 1), (1, 1),
-                        (1, 0), (1, -1), (0, -1), (-1, -1)]
+    def __init__(self, a, b):
+        self.x_range = b+1  # size of background
+        self.y_range = a+1
+        self.motions = [(-0.5, 0), (-0.5, 0.5), (0, 0.5), (0.5, 0.5),
+                        (0.5, 0), (0.5, -0.5), (0, -0.5), (-0.5, -0.5)]
+        '''self.motions = [(-1, 0), (-1, 1), (0, 1), (1, 1),
+                        (1, 0), (1, -1), (0, -1), (-1, -1)]'''
         self.obs = self.obs_map()
 
     def update_obs(self, obs):
@@ -25,24 +27,12 @@ class Env:
         y = self.y_range
         obs = set()
 
-        for i in range(x):
+        '''for i in range(x):
             obs.add((i, 0))
-        for i in range(x):
             obs.add((i, y - 1))
 
         for i in range(y):
             obs.add((0, i))
-        for i in range(y):
-            obs.add((x - 1, i))
-
-        for i in range(10, 21):
-            obs.add((i, 15))
-        for i in range(15):
-            obs.add((20, i))
-
-        for i in range(15, 30):
-            obs.add((30, i))
-        for i in range(16):
-            obs.add((40, i))
+            obs.add((x - 1, i))'''
 
         return obs

@@ -7,7 +7,7 @@ import os
 import sys
 import math
 import heapq
-
+import time
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
                 "/../../Search_based_Planning/")
 
@@ -17,12 +17,10 @@ from Search_2D import plotting, env
 class AStar:
     """AStar set the cost + heuristics as the priority
     """
-    def __init__(self, s_start, s_goal, heuristic_type):
-        self.s_start = s_start
-        self.s_goal = s_goal
-        self.heuristic_type = heuristic_type
+    def __init__(self, Env):
+        
 
-        self.Env = env.Env()  # class Env
+        self.Env = Env  # class Env
 
         self.u_set = self.Env.motions  # feasible input set
         self.obs = self.Env.obs  # position of obstacles
@@ -32,12 +30,18 @@ class AStar:
         self.PARENT = dict()  # recorded parent
         self.g = dict()  # cost to come
 
-    def searching(self):
+    def searching(self, s_start, s_goal, heuristic_type):
         """
         A_star Searching.
         :return: path, visited order
         """
-
+        self.s_start = s_start
+        self.s_goal = s_goal
+        self.heuristic_type = heuristic_type	
+        self.OPEN = []  # priority queue / OPEN set
+        self.CLOSED = []  # CLOSED set / VISITED order
+        self.PARENT = dict()  # recorded parent
+        self.g = dict()  # cost to come
         self.PARENT[self.s_start] = self.s_start
         self.g[self.s_start] = 0
         self.g[self.s_goal] = math.inf
@@ -47,11 +51,14 @@ class AStar:
         while self.OPEN:
             _, s = heapq.heappop(self.OPEN)
             self.CLOSED.append(s)
+            
 
             if s == self.s_goal:  # stop condition
+
                 break
 
             for s_n in self.get_neighbor(s):
+
                 new_cost = self.g[s] + self.cost(s, s_n)
 
                 if s_n not in self.g:
@@ -151,6 +158,14 @@ class AStar:
         if s_start in self.obs or s_end in self.obs:
             return True
 
+        '''if ((s_start[0]-0.5,s_start[1]) in self.obs and (s_start[0]+0.5,s_start[1]) in self.obs) or\
+           ((s_end[0]-0.5,s_end[1]) in self.obs and (s_end[0]+0.5,s_end[1]) in self.obs):
+            return True
+
+        if ((s_start[0],s_start[1]-0.5) in self.obs and (s_start[0],s_start[1]+0.5) in self.obs) or\
+           ((s_end[0],s_end[1]-0.5) in self.obs and (s_end[0],s_end[1]+0.5) in self.obs):
+            return True'''
+
         if s_start[0] != s_end[0] and s_start[1] != s_end[1]:
             if s_end[0] - s_start[0] == s_start[1] - s_end[1]:
                 s1 = (min(s_start[0], s_end[0]), min(s_start[1], s_end[1]))
@@ -183,9 +198,10 @@ class AStar:
         s = self.s_goal
 
         while True:
+
             s = PARENT[s]
             path.append(s)
-
+            
             if s == self.s_start:
                 break
 
@@ -211,10 +227,10 @@ def main():
     s_start = (5, 5)
     s_goal = (45, 25)
 
-    astar = AStar(s_start, s_goal, "euclidean")
+    astar = AStar(env.Env(5,5))
     plot = plotting.Plotting(s_start, s_goal)
 
-    path, visited = astar.searching()
+    path, visited = astar.searching(s_start, s_goal, "euclidean")
     plot.animation(path, visited, "A*")  # animation
 
     # path, visited = astar.searching_repeated_astar(2.5)               # initial weight e = 2.5
